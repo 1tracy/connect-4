@@ -1,9 +1,34 @@
 """ Connect Four """
 
 LOWEST_COLUMN = [0, 0, 0, 0, 0, 0, 0] #when tile is added, index increases
-X_COUNT = [[], [], [], [], [], [], []] #stores position of x tiles
-O_COUNT = [[], [], [], [], [], [], []] #stores position of o tiles
 WINNER = ''
+GAMEBOARD = [[' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ']]
+TEST_GAMEBOARD = [[' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                  [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                  [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                  [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                  [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                  [' ', ' ', ' ', ' ', ' ', ' ', ' ']]
+def print_board():
+    """ print board """
+    print("print board")
+    for i in range(6):
+        for j in range(6):
+            print("| "+GAMEBOARD[i][j]+ " ", end="")
+        print("|"+GAMEBOARD[i][5], end="")
+        print(GAMEBOARD[i][6]+" |", end="\n")
+        print("-"*29)
+
+def is_empty(slot):
+    """ check if slot is empty """
+    if slot == "":
+        return True
+    return False
 
 def choose_column():
     """ choose column to drop tile in """
@@ -17,16 +42,48 @@ def fill_slot(col, num):
     """ fill lowest slot on column specified """
     LOWEST_COLUMN[col-1] += 1
     if num == 0: #player tile
-        X_COUNT[col-1].append(LOWEST_COLUMN[col-1])
-        print(f'X_COUNT: {X_COUNT}')
+        GAMEBOARD[(6-LOWEST_COLUMN[col-1])][col-1] = 'X'
     else: #ai tile
-        O_COUNT[col-1].append(LOWEST_COLUMN[col-1])
-        print(f'O_COUNT: {O_COUNT}')
+        GAMEBOARD[(6-LOWEST_COLUMN[col-1])][col-1] = 'O'
+    print_board()
 
 def ai_move():
     """ ai calculate best move, return column """
     print("predict move")
-    return 2
+    #iterate through rows, then columns
+
+    #horizontal
+    for row in range(len(GAMEBOARD)):
+        for column in range(6):
+            print("row/column", row, column)
+            if GAMEBOARD[row][column] == "O" and LOWEST_COLUMN[column] < 6:
+                if is_empty(GAMEBOARD[row][column+1]):
+                    return column+1
+    #vertical
+    for row in range(len(GAMEBOARD)-1):
+        for column in range(7):
+            print("row/column", row, column)
+            if GAMEBOARD[row][column] == "O" and LOWEST_COLUMN[column] < 6:
+                if is_empty(GAMEBOARD[row+1][column]):
+                    return column
+    #diagonal up
+    for row in range(1, len(GAMEBOARD)):
+        for column in range(6):
+            print("row/column", row, column)
+            if GAMEBOARD[row][column] == "O" and LOWEST_COLUMN[column] < 6:
+                if is_empty(GAMEBOARD[row-1][column+1]):
+                    return column+1
+    #diagonal down
+    for row in range(len(GAMEBOARD)-1):
+        for column in range(6):
+            print("row/column", row, column)
+            if GAMEBOARD[row][column] == "O" and LOWEST_COLUMN[column] < 6:
+                if is_empty(GAMEBOARD[row+1][column+1]):
+                    return column+1
+    #return random move
+    for column in LOWEST_COLUMN:
+        if column < 6:
+            return column
 
 def run_solo():
     """ game code here """
@@ -45,8 +102,8 @@ def run_solo():
         elif is_board_full():
             print('game ends in a tie')
             game_over = True
-        #else:
-        #    game_over = False
+        else:
+            game_over = False
         choice = ai_move()
         fill_slot(choice, 1)
 
@@ -57,7 +114,7 @@ def run_solo():
             print('game ends in a tie')
             game_over = True
         # testing purposes only
-        game_over = True
+        #game_over = True
 
 def run_duo():
     """ game code here """
@@ -66,16 +123,12 @@ def run_duo():
 def is_board_full():
     """ check if board is full """
     print("is board full")
+    return False
 
 def is_there_winner():
     """ check if there is a winner """
     print("is there winner")
-
-def print_board():
-    """ print board """
-    print("print board")
-    for i in range(7, 0, -1):
-        print(i)
+    return False
 
 def get_gamemode():
     """ get gamemode """
@@ -89,7 +142,7 @@ def main():
     """ main function """
     print("\nConnect Four\n")
     print("Make sure to view the rules in the README file before playing!\n")
-    mode = get_gamemode()
+    #mode = get_gamemode()
     run_solo()
     #if mode == "solo":
     #    run_solo()
